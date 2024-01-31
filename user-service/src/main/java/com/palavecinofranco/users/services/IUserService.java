@@ -12,6 +12,7 @@ public interface IUserService {
     Page<User> findAll(Pageable pageable);
     Optional<User> getById(Long id);
     Optional<User> getByUsername(String username);
+    Optional<User> getByEmail(String email);
     User save(User user);
     User update(User user, Long id);
     void delete(Long id);

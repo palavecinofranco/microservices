@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class UserController {
         if(service.getById(id).isPresent()){
             return ResponseEntity.ok(service.getById(id).get());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario con el id " + id + " no encontrado");
     }
 
     @GetMapping("/{username}")
@@ -49,35 +50,59 @@ public class UserController {
         if(service.getByUsername(username).isPresent()){
             return ResponseEntity.ok(service.getByUsername(username).get());
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario " + username + " no encontrado");
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<?> getByEmail(@PathParam("email") String email){
+        if(service.getByEmail(email).isPresent()){
+            return ResponseEntity.ok(service.getByEmail(email).get());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario " + email + " no encontrado");
     }
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody User user, BindingResult result){
-            if (result.hasErrors()){
-                return fieldValidation(result);
-            }
+        if (result.hasErrors()){
+            return fieldValidation(result);
+        }
+        if (service.getByEmail(user.getEmail()).isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Ya existe un usuario con ese email"));
+        }
+        if (service.getByUsername(user.getUsername()).isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Ya existe un usuario con ese nombre de usuario"));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
     }
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id){
-        if (result.hasErrors()){
-            return fieldValidation(result);
-        }
         if(service.getById(id).isPresent()){
+            if (result.hasErrors()){
+                return fieldValidation(result);
+            }
+            if (service.getByEmail(user.getEmail()).isPresent()){
+                if (!id.equals(service.getByEmail(user.getEmail()).get().getId())){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Ya existe un usuario con ese email"));
+                }
+            }
+            if (service.getByUsername(user.getUsername()).isPresent()){
+                if (!id.equals(service.getByUsername(user.getUsername()).get().getId())){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Ya existe un usuario con ese username"));
+                }
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(service.update(user, id));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario con el id " + id + " no encontrado");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         if(service.getById(id).isPresent()){
             service.delete(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario con el id " + id + " no encontrado");
     }
 
     private ResponseEntity<Map<String, String>> fieldValidation(BindingResult result) {

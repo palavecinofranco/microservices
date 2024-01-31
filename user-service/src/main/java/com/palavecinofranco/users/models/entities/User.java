@@ -27,6 +27,8 @@ public class User implements Serializable {
     @NotNull @NotBlank @Email
     private String email;
 
+
+
     public void setId(Long id) {
         this.id = id;
     }

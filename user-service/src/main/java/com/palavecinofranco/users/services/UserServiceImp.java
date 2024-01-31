@@ -40,6 +40,11 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
+    public Optional<User> getByEmail(String email) {
+        return repository.findByEmailIgnoreCase(email);
+    }
+
+    @Override
     public User save(User user) {
         return repository.save(user);
     }
