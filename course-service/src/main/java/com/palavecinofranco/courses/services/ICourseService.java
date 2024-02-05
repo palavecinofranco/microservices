@@ -18,6 +18,7 @@ public interface ICourseService {
     Course save(Course course);
     Course update(Course course, Long id);
     void delete(Long id);
+    void deleteCourseUser(Long id);
 
     Page<Course> findAll(Pageable pageable);
 

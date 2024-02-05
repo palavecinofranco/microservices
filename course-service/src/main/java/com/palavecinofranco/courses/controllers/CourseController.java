@@ -129,6 +129,13 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso con id " + id + " inexistente");
     }
 
+    @DeleteMapping("/remove-courseuser/{id}")
+    public ResponseEntity<?> deleteCourseUser(@PathVariable Long id){
+        service.deleteCourseUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
     private ResponseEntity<Map<String, String>> fieldValidation(BindingResult result) {
         Map<String, String> errors =  new HashMap<>();
         result.getFieldErrors().forEach(e->{

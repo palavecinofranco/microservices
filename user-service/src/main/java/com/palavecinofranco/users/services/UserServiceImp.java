@@ -1,5 +1,6 @@
 package com.palavecinofranco.users.services;
 
+import com.palavecinofranco.users.clients.CourseFeignClient;
 import com.palavecinofranco.users.models.entities.User;
 import com.palavecinofranco.users.repositories.UserRepository;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class UserServiceImp implements IUserService {
 
     private final UserRepository repository;
+    private final CourseFeignClient client;
 
-    public UserServiceImp(UserRepository repository){
+    public UserServiceImp(UserRepository repository, CourseFeignClient client){
         this.repository = repository;
+        this.client = client;
     }
     @Override
     public List<User> getAll() {
@@ -65,6 +68,7 @@ public class UserServiceImp implements IUserService {
     @Override
     public void delete(Long id) {
         repository.deleteById(id);
+        client.deleteCourseUser(id);
     }
 
     @Override

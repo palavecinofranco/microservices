@@ -5,6 +5,7 @@ import com.palavecinofranco.courses.models.User;
 import com.palavecinofranco.courses.models.entities.Course;
 import com.palavecinofranco.courses.models.entities.CourseUser;
 import com.palavecinofranco.courses.repositories.CourseRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -74,6 +75,12 @@ public class CourseServiceImp implements ICourseService {
     @Override
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCourseUser(Long id) {
+        repository.deleteCourseUser(id);
     }
 
     @Override
