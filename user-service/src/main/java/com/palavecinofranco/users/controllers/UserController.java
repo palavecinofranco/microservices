@@ -38,27 +38,32 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathParam("id") Long id){
+    public ResponseEntity<?> getById(@PathVariable("id") Long id){
         if(service.getById(id).isPresent()){
             return ResponseEntity.ok(service.getById(id).get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario con el id " + id + " no encontrado");
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<?> getByUsername(@PathParam("username") String username){
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getByUsername(@PathVariable("username") String username){
         if(service.getByUsername(username).isPresent()){
             return ResponseEntity.ok(service.getByUsername(username).get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario " + username + " no encontrado");
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<?> getByEmail(@PathParam("email") String email){
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> getByEmail(@PathVariable("email") String email){
         if(service.getByEmail(email).isPresent()){
             return ResponseEntity.ok(service.getByEmail(email).get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario " + email + " no encontrado");
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getAllById(@RequestParam List<Long> ids){
+       return ResponseEntity.ok(service.findAllById(ids));
     }
 
     @PostMapping("/save")

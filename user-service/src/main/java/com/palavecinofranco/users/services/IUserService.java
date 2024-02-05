@@ -16,4 +16,6 @@ public interface IUserService {
     User save(User user);
     User update(User user, Long id);
     void delete(Long id);
+
+    List<User> findAllById(List<Long> ids);
 }
