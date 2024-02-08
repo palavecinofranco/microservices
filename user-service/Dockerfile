@@ -17,8 +17,10 @@ FROM openjdk:17-jdk-alpine
 
 WORKDIR /app
 
+RUN mkdir ./logs
+
 COPY --from=builder /app/user-msvc/target/user-service-0.0.1-SNAPSHOT.jar .
 
 EXPOSE 8001
 
-ENTRYPOINT ["java", "-jar", "user-service-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "user-service-0.0.1-SNAPSHOT.jar"]
